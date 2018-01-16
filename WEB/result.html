@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<!-- -------------------------------------------------------------------------
+  ROMSUM - Pinball ROM Identifier (web-based tool)
+  Written by Bill Ung <bill@ufopinball.com>, Copyright (C) 1996-2018
+ 
+  A web-based tool that allows a user to upload a pinball ROM file that
+  they want to verify, or in some cases may not be able to identify.
+  Displays size and checksum, plus any matching game information from
+  the known database.
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  any later version.
+ 
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU General Public License for more details.
+ 
+  You should have received a copy of the GNU General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+------------------------------------------------------------------------- -->
+<html>
+<head>
+  <title>ROMSUM results</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+<script>
+
+// Accept uploaded file
+function queryRomfile() {
+  // Construct REST call to retrieve uploaded file
+  var nameRomfile = "<?php echo $target_name ?>";
+  var pathRomfile = "/uploads/" + nameRomfile;
+  document.getElementById("file").innerHTML = nameRomfile;
+  var xmlHttpRomfile = new XMLHttpRequest();
+  xmlHttpRomfile.open("GET", pathRomfile, true);
+  xmlHttpRomfile.responseType = "arraybuffer";
+  xmlHttpRomfile.onload = processRomFile;
+  xmlHttpRomfile.send(null);
+}
+
+// Process ROM file based on file SIZE and calculated CHECKSUM
+function processRomFile() {
+  var checksumString = "";
+  var epromString = "";
+  var arrayBuffer = this.response;
+  if (arrayBuffer) {
+    var byteArray = new Uint8Array(arrayBuffer);
+    var checksumValue = 0;
+    for (var i = 0; i < byteArray.byteLength; i++) {
+      checksumValue += byteArray[i];
+    }
+    var hexString = checksumValue.toString(16);
+    checksumString = hexString.substring(hexString.length-4, hexString.length).toUpperCase();
+    document.getElementById("checksum").innerHTML = checksumString.trim();
+    document.getElementById("size").innerHTML = byteArray.byteLength + " bytes";
+    switch (byteArray.byteLength) {
+      case 32: epromString = "82S123 PROM"; break;
+      case 1024: epromString = "2708"; break;
+      case 2048: epromString = "2716"; break;
+      case 4096: epromString = "2732"; break;
+      case 8192: epromString = "2764"; break;
+      case 16384: epromString = "27128"; break;
+      case 32768: epromString = "27256"; break;
+      case 65536: epromString = "27512"; break;
+      case 131072: epromString = "27c010"; break;
+      case 262144: epromString = "27c020"; break;
+      case 524288: epromString = "27c040 or 27c4001"; break;
+      case 1048576: epromString = "27c801"; break;
+      case 2097152: epromString = "ATMEL AT49BV1614 Flash Memory"; break;
+      default: epromString = "Error: non-standard file size"; break;
+    }
+    document.getElementById("eprom").innerHTML = epromString;
+  }
+  // Query table 'roms', using SIZE and CHECKSUM values, and return 'zipfile' identifier
+  var Url = "roms.php/" + byteArray.byteLength + "/" + checksumString;
+  var xmlHttpRoms = new XMLHttpRequest(); 
+  xmlHttpRoms.onreadystatechange = processRomInfo;
+  xmlHttpRoms.open( "GET", Url, true );
+  xmlHttpRoms.send( null );
+}
+
+// Process returned info from 'roms' table query, extract 'zipfile' identifier
+function processRomInfo() {
+  // Handle REST call return data from 'roms' table query
+  var ZIP = "";
+  if ( this.readyState == 4 && this.status == 200 ) {
+    if ( this.responseText.trim() == "" ) {
+        document.getElementById("name").innerHTML = "Not found";
+    }
+    else {
+      var info = eval ( "(" + this.responseText + ")" );
+      document.getElementById("pinmame").innerHTML = info.File;
+      document.getElementById("zip").innerHTML = info.ZIP + ".zip";
+      ZIP = info.ZIP;
+    }
+  }
+  // Use valid 'zipfile' identifier, query table 'zipfile' to determine IPDB value
+  if ( ZIP.length > 0 ) {
+    // Construct REST call for 'zipfile' lookup 
+    var Url = "zipfile.php/" + info.ZIP;
+    var xmlHttpZipfile = new XMLHttpRequest();
+    xmlHttpZipfile.onreadystatechange = processIPDBInfo;
+    xmlHttpZipfile.open( "GET", Url, true );
+    xmlHttpZipfile.send( null );
+  }
+}
+
+// Process returned info from 'zipfile' table query, extract IPDB value
+function processIPDBInfo() {
+  // Handle REST call return data from 'ipdb' table query
+  var IPDB = "";
+  if ( this.readyState == 4 && this.status == 200 ) {
+    if ( this.responseText.trim() == "" ) {
+      document.getElementById("name").innerHTML = "Not found";
+    } else {
+      var info = eval ( "(" + this.responseText + ")" );
+      IPDB = info.IPDB;
+    }
+  }
+  // Use valid IPDB value, query table 'games' for full machine information
+  if ( IPDB.length > 0 ) {
+    // Construct REST call for 'games' lookup
+    var Url = "games.php/" + IPDB;
+    var xmlHttpGames = new XMLHttpRequest(); 
+    xmlHttpGames.onreadystatechange = processGameInfo;
+    xmlHttpGames.open( "GET", Url, true );
+    xmlHttpGames.send( null );
+  }
+}
+
+// Process returned info from 'games' table query, extract complete game information
+function processGameInfo() {
+
+  // Handle REST call return data from 'games' table query
+  if ( this.readyState == 4 && this.status == 200 ) {
+    if ( this.responseText.trim() == "" ) {
+      document.getElementById("name").innerHTML = "Not found";
+    } else {
+      // Populate output fields
+      var info = eval ( "(" + this.responseText + ")" );
+      document.getElementById("ipdb").innerHTML = '<a TARGET="_BLANK" HREF="http://www.ipdb.org/machine.cgi?id=' + info.IPDB + '">' + info.IPDB + '</a>';
+      document.getElementById("name").innerHTML = info.Name;
+      document.getElementById("year").innerHTML = info.Year;
+      if (info.Year = "")
+        document.getElementById("year").innerHTML = "Unknown";
+      document.getElementById("manufacturer").innerHTML = info.Manufacturer;
+    }
+  }
+}
+
+// Upload another ROM by going back to the main page
+function uploadAgain() {
+    window.location="index.html";
+}
+
+</script>
+</head>
+<body onload="queryRomfile()">
+<div class="block-left">
+<p><div class="title"><img src="title.png"></div></p>
+<p><span class="header">Game information</span></p>
+<p><span class="label">Name: </span><span class="value" id="name"></span></p>
+<p><span class="label">Year: </span><span class="value" id="year"></span></p>
+<p><span class="label">Manufacturer: </span><span class="value" id="manufacturer"></span></p>
+<p><span class="label">IPDB: </span><span class="value" id="ipdb"></span></p>
+<p><span class="header">Game software</span></p>
+<p><span class="label">Uploaded File Name: </span><span class="value" id="file"></span></p>
+<p><span class="label">PinMAME File: </span><span class="value" id="pinmame"></span></p>
+<p><span class="label">PinMAME ZIP: </span><span class="value", id="zip"></span></p>
+<p><span class="label">File Size: </span><span class="value" id="size"></span></p>
+<p><span class="label">Eprom Part/Size: </span><span class="value" id="eprom"></span></p>
+<p><span class="label">Checksum: </span><span class="value" id="checksum"></span></p>
+<p><span class="button"><button type="button" onClick="uploadAgain()">Upload another ROM</button></span></p>
+<p><span class="copyright">Copyright (C) 2018 UFO Pinball<sup><font SIZE=0>TM</font></sup></span></p>
+</div>
+</body>
+</html>

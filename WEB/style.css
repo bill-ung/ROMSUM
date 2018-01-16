@@ -1,0 +1,85 @@
+/****************************************************************************
+/* ROMSUM - Pinball ROM Identifier (web-based tool)
+/* Written by Bill Ung <bill@ufopinball.com>, Copyright (C) 1996-2018
+/*
+/* A web-based tool that allows a user to upload a pinball ROM file that
+/* They want to verify, or in some cases may not be able to identify.
+/* Displays size and checksum, plus any matching game information from
+/* the known database.
+/*
+/* This program is free software: you can redistribute it and/or modify
+/* it under the terms of the GNU General Public License as published by
+/* the Free Software Foundation, either version 3 of the License, or
+/* any later version.
+/*
+/* This program is distributed in the hope that it will be useful,
+/* but WITHOUT ANY WARRANTY; without even the implied warranty of
+/* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+/* GNU General Public License for more details.
+/*
+/* You should have received a copy of the GNU General Public License
+/* along with this program. If not, see <http://www.gnu.org/licenses/>.
+/***************************************************************************/
+
+.title {
+  font-size: 150%;
+  font-weight: bold;
+  padding-bottom: 10px;
+  text-align: center;
+}
+.label {
+  font-weight: bold;
+  margin-left: 28px;
+}
+.header {
+  font-size: 125%;
+  font-weight: bold;
+}
+.value {
+  color: #FFFFFF;
+}
+a {
+  color: #FFFFFF;
+}
+a:visited {
+  color: #D0D0D0;
+}
+body {
+  background-image: url("background.jpg");
+  background-color: #000000;
+  color: #FFFF00;
+}
+.block-center {
+  background-color: #292C32;
+  border-color: #FFFFFF;
+  border-style: solid;
+  border-width: 3px;
+  color: #A0D0FF;
+  font-family: sans-serif;
+  font-weight: bold;
+  margin: 16px;
+  padding: 20px;
+  text-align: center;
+}
+.block-left {
+  background-color: #292C32;
+  border-color: #FFFFFF;
+  border-style: solid;
+  border-width: 3px;
+  color: #A0D0FF;
+  font-family: sans-serif;
+  font-weight: bold;
+  margin: 16px;
+  padding: 20px;
+  text-align: left;
+}
+.copyright {
+  font-size: 80%;
+  font-weight: bold;
+  text-align: center;
+}
+.button {
+  padding: 10;
+  text-align: center;
+}
+

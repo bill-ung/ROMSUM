@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<!-- -------------------------------------------------------------------------
+  ROMSUM - Pinball ROM Identifier (web-based tool)
+  Written by Bill Ung <bill@ufopinball.com>, Copyright (C) 1996-2018
+ 
+  A web-based tool that allows a user to upload a pinball ROM file that
+  they want to verify, or in some cases may not be able to identify.
+  Displays size and checksum, plus any matching game information from
+  the known database.
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  any later version.
+ 
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU General Public License for more details.
+ 
+  You should have received a copy of the GNU General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+------------------------------------------------------------------------- -->
+<html>
+<head>
+  <title>ROMSUM file checker</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+<body>
+
+<div class="block-center">
+<p><div class="title"><img src="title.png"></div></p>
+<form action="upload.php" method="post" enctype="multipart/form-data">
+    <span class="label">Select image to upload:</span>
+    <input type="file" name="fileToUpload" id="fileToUpload">
+    <input type="submit" value="Upload Image" name="submit">
+
+</form>
+<p>
+The Pinball Rom Identifier is an extension of the ROMSUM utility.  You may select any ROM file you may have and upload it here.  The tool will attempt to match the file against known ROM images, based on file size and checksum values.  If a match is found, the game information and details for the specific EPROM chip are displayed.
+<br><br>
+If your file does not match, send an <a HREF="http://www.ufopinball.com/contact.htm">E-Mail</a> and I'll see if I can identify your file manually.  Once identified, you may also wish to submit the file to the IPDB and/or PinMAME as a contribution to the pinball hobby.
+<br><br>
+This is an experimental tool, written by <a TARGET="_BLANK" HREF="http://www.ufopinball.com/contact.htm">Bill Ung</a> using Linux (CentOS), Apache (http), MySQL (MariaDB) and PHP, plus HTML/JavaScript
+<br>
+Database information was generated from personally collected ROM files, the
+<a TARGET="_BLANK" HREF="http://www.ipdb.org">Internet Pinball Database (IPDB)</a>, and the
+<a TARGET="_BLANK" HREF="http://pinmame.retrogames.com">PinMAME project</a>.
+<br><br>
+If you're looking for the older ROMSUM command-line utilities, <a HREF="romsum.html">click here</a>.
+<br><br>
+If you have any feedback regarding the Pinball Rom Identifier utility, feel free to send 
+<a HREF="http://www.ufopinball.com/contact.htm">E-Mail</a>.
+<br><br>
+<div class="copyright">
+Registered trademarks remain the property of their respective owners.
+<br>
+Background courtesy of <a TARGET="_BLANK" HREF="http://wallpapercave.com/">WallpaperCave</a>
+<br>
+Title font "Digital-7" downloaded from <a TARGET="_BLANK" HREF="http://www.1001freefonts.com/">1001 Free Fonts</a>
+<br>
+Everything else is Copyright (C) 2018 UFO Pinball<sup><font SIZE=0>TM</font></sup>
+</p>
+</div>
+</div>
+</body>
+</html>
