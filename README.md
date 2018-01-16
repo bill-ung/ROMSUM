@@ -47,5 +47,4 @@ EPROM chips do sometimes degrade over time, so performing a checksum is an impor
 
 [ROMSUM](http://roms.ufopinball.com/) is written by Bill Ung <bill@ufopinball.com>  
 Copyright (C) 1996-2018 Bill Ung and [UFO Pinball](http://www.ufopinball.com/)  
-Registered trademarks remain the property of their respective owners  
- 
+Registered trademarks remain the property of their respective owners
